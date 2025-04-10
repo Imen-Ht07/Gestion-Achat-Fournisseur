@@ -1,12 +1,12 @@
 package gestionachatfournisseur.gestionachatfournisseu.models;
 
+import gestionachatfournisseur.gestionachatfournisseu.enumrate.StatutCommande;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 public class CommandeAchat {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,7 +16,8 @@ public class CommandeAchat {
     private Fournisseur fournisseur;
     @Column(nullable = false)
     private LocalDate date;
-    private String statut;
+    @Enumerated(EnumType.STRING)
+    private StatutCommande statut;
     private Double montant;
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
@@ -48,11 +49,11 @@ public class CommandeAchat {
         this.date = date;
     }
 
-    public String getStatut() {
+    public StatutCommande getStatut() {
         return statut;
     }
 
-    public void setStatut(String statut) {
+    public void setStatut(StatutCommande statut) {
         this.statut = statut;
     }
 

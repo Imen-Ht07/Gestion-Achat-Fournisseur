@@ -2,14 +2,18 @@ package gestionachatfournisseur.gestionachatfournisseu.controllers;
 
 import gestionachatfournisseur.gestionachatfournisseu.models.CommandeAchat;
 import gestionachatfournisseur.gestionachatfournisseu.models.Fournisseur;
-import gestionachatfournisseur.gestionachatfournisseu.Services.CommandeAchatService;
 import gestionachatfournisseur.gestionachatfournisseu.models.LigneCommandeAchat;
-import gestionachatfournisseur.gestionachatfournisseu.repositories.FournisseurRepository;  // Importation du FournisseurRepository
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;  // Importation de HttpStatus
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;  // Importation de ResponseStatusException
+import gestionachatfournisseur.gestionachatfournisseu.Services.CommandeAchatService;
+import gestionachatfournisseur.gestionachatfournisseu.repositories.FournisseurRepository;
+import gestionachatfournisseur.gestionachatfournisseu.enumrate.StatutCommande;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -21,7 +25,7 @@ public class CommandeAchatController {
     private CommandeAchatService commandeAchatService;
 
     @Autowired
-    private FournisseurRepository fournisseurRepository;  // Injection de FournisseurRepository
+    private FournisseurRepository fournisseurRepository;
 
     @GetMapping
     public List<CommandeAchat> getAll() {
@@ -35,16 +39,17 @@ public class CommandeAchatController {
 
     @PostMapping
     public CommandeAchat save(@RequestBody CommandeAchat commandeAchat) {
-        // Vérifie si le fournisseur existe dans la base de données
+        // Vérifie si le fournisseur existe
         Fournisseur fournisseur = fournisseurRepository.findById(commandeAchat.getFournisseur().getId()).orElse(null);
         if (fournisseur == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Fournisseur non trouvé");
         }
+
         commandeAchat.setFournisseur(fournisseur);
-        // Vérifie que chaque ligne de commande est associée à la commande
+
+        // Associe la commande à chaque ligne
         if (commandeAchat.getLignes() != null) {
             for (LigneCommandeAchat ligne : commandeAchat.getLignes()) {
-                // On associe la commande à chaque ligne
                 ligne.setCommande(commandeAchat);
             }
         }
@@ -55,5 +60,21 @@ public class CommandeAchatController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         commandeAchatService.delete(id);
+    }
+
+    // ✅ Filtrage par statut
+    @GetMapping("/by-statut/{statut}")
+    public List<CommandeAchat> getByStatut(@PathVariable StatutCommande statut) {
+        return commandeAchatService.getByStatut(statut);
+    }
+
+    // ✅ BONUS : filtrage dynamique (statut, fournisseur, dates)
+    @GetMapping("/filter")
+    public List<CommandeAchat> filterCommandes(
+            @RequestParam(required = false) StatutCommande statut,
+            @RequestParam(required = false) Long fournisseurId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        return commandeAchatService.filterCommandes(statut, fournisseurId, startDate, endDate);
     }
 }

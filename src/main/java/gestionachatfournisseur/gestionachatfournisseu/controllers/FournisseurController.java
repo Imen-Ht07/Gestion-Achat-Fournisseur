@@ -1,5 +1,6 @@
 package gestionachatfournisseur.gestionachatfournisseu.controllers;
 
+import gestionachatfournisseur.gestionachatfournisseu.dto.FournisseurStatsDTO;
 import gestionachatfournisseur.gestionachatfournisseu.models.Fournisseur;
 import gestionachatfournisseur.gestionachatfournisseu.Services.FournisseurService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,4 +56,10 @@ public class FournisseurController {
         fournisseurService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    //Evaluation
+    @GetMapping("/stats")
+    public List<FournisseurStatsDTO> getStats() {
+        return fournisseurService.getFournisseursStats();
+    }
+
 }

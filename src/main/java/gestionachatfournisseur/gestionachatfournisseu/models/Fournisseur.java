@@ -2,6 +2,9 @@ package gestionachatfournisseur.gestionachatfournisseu.models;
 
 import jakarta.persistence.*;
 import java.util.List;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+
 
 @Entity
 public class Fournisseur {
@@ -16,6 +19,8 @@ public class Fournisseur {
     private String contact;
 
     private String qualiteService;
+    @Min(0)
+    @Max(5)
     private Double note;
 
     @OneToMany(mappedBy = "fournisseur")
