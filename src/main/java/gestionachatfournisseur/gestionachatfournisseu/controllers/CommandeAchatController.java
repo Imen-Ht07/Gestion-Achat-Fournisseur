@@ -62,13 +62,13 @@ public class CommandeAchatController {
         commandeAchatService.delete(id);
     }
 
-    // ✅ Filtrage par statut
+    // Filtrage par statut
     @GetMapping("/by-statut/{statut}")
     public List<CommandeAchat> getByStatut(@PathVariable StatutCommande statut) {
         return commandeAchatService.getByStatut(statut);
     }
 
-    // ✅ BONUS : filtrage dynamique (statut, fournisseur, dates)
+    //  filtrage dynamique (statut, fournisseur, dates)
     @GetMapping("/filter")
     public List<CommandeAchat> filterCommandes(
             @RequestParam(required = false) StatutCommande statut,

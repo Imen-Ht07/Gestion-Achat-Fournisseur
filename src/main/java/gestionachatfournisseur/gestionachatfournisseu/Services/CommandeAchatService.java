@@ -3,9 +3,11 @@ package gestionachatfournisseur.gestionachatfournisseu.Services;
 import gestionachatfournisseur.gestionachatfournisseu.enumrate.StatutCommande;
 import gestionachatfournisseur.gestionachatfournisseu.models.CommandeAchat;
 import gestionachatfournisseur.gestionachatfournisseu.models.Fournisseur;
+import gestionachatfournisseur.gestionachatfournisseu.models.HistoriqueAchats;
 import gestionachatfournisseur.gestionachatfournisseu.models.LigneCommandeAchat;
 import gestionachatfournisseur.gestionachatfournisseu.repositories.CommandeAchatRepository;
 import gestionachatfournisseur.gestionachatfournisseu.repositories.FournisseurRepository;
+import gestionachatfournisseur.gestionachatfournisseu.repositories.HistoriqueAchatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,8 @@ public class CommandeAchatService {
 
     @Autowired
     private CommandeAchatRepository commandeAchatRepository;
-
+    @Autowired
+    private HistoriqueAchatsRepository historiqueAchatsRepository;
     @Autowired
     private FournisseurRepository fournisseurRepository;
 
@@ -48,7 +51,20 @@ public class CommandeAchatService {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Les lignes de commande sont vides");
             }
 
-            return commandeAchatRepository.save(commandeAchat);
+            // Sauvegarde de la commande
+            CommandeAchat savedCommande = commandeAchatRepository.save(commandeAchat);
+
+            // Création de l'historique
+            HistoriqueAchats historique = new HistoriqueAchats();
+            historique.setDate(savedCommande.getDate());
+            historique.setMontant(savedCommande.getMontant());
+            historique.setDescription("Commande enregistrée : ID " + savedCommande.getId());
+            historique.setFournisseur(fournisseur);
+
+            // Sauvegarde de l'historique
+            historiqueAchatsRepository.save(historique);
+
+            return savedCommande;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le fournisseur est requis pour cette commande");
         }
