@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/fournisseurs")
-@CrossOrigin(origins = "http://localhost:4200") // Spécifie le front Angular si tu l'utilises
+//@CrossOrigin(origins = "http://localhost:4200")
 public class FournisseurController {
 
     @Autowired

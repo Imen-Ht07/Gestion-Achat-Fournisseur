@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/lignes-commandes")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 public class LigneCommandeAchatController {
 
     @Autowired

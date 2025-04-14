@@ -1,11 +1,13 @@
 package gestionachatfournisseur.gestionachatfournisseu.models;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
 import java.util.List;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
-
+@Setter
+@Getter
 @Entity
 public class Fournisseur {
 
